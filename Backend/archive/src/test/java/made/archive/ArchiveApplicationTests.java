@@ -1,4 +1,4 @@
-package smart.archive;
+package made.archive;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

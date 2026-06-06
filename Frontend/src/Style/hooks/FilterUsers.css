@@ -1,0 +1,162 @@
+/* ─────────────────────────────────────────
+   Fichier : FilterUsers.css
+   Cohérence avec la charte graphique globale
+───────────────────────────────────────── */
+
+/* 1. Conteneur principal (Barre de filtres) */
+.filter-bar {
+    width: 100%;
+    background: rgba(18, 13, 49, 0.85); /* Fond sombre #120d31 cohérent */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap; /* Permet un retour à la ligne propre si l'écran rétrécit */
+    align-items: center;
+    gap: 15px; /* Même espacement que ta navbar */
+    font-family: "Playfair Display", serif;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 2. Style des champs de saisie (Inputs textuels) */
+.filter-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    font-family: "Playfair Display", serif;
+    outline: none;
+    min-width: 150px;
+    flex: 1; /* Permet aux inputs de s'ajuster harmonieusement en largeur */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-input::placeholder {
+    color: rgba(250, 235, 215, 0.5); /* antiquewhite avec opacité */
+}
+
+.filter-input:focus {
+    border-color: aquamarine; /* Focus signature */
+    box-shadow: 0 0 5px rgba(127, 255, 212, 0.3);
+}
+
+/* 3. Section de filtrage par Rôles */
+.filter-roles-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0.2rem 0.5rem;
+}
+
+.filter-roles-label {
+    color: antiquewhite;
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+/* Style des badges (Labels jouant le rôle de checkboxes) */
+/* Style des badges (Labels jouant le rôle de checkboxes) */
+.filter-role-badge {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    -webkit-user-select: none; 
+    -moz-user-select: none;    
+    -ms-user-select: none;    
+    user-select: none;        
+}
+
+.filter-role-badge:hover {
+    border-color: #7abdf5;
+    color: #7abdf5;
+}
+
+/* État coché (Actif) : Bascule sur ta couleur signature */
+.filter-role-badge.active {
+    background-color: aquamarine;
+    border-color: aquamarine;
+    color: #120d31; /* Texte sombre pour un contraste parfait */
+    box-shadow: 0 2px 8px rgba(127, 255, 212, 0.3);
+}
+
+/* Masquage de la checkbox native tout en restant accessible pour les lecteurs d'écran */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* 4. Bouton de Réinitialisation */
+.filter-reset-btn {
+    background: transparent;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 0.5rem 1.2rem;
+    border-radius: 5px;
+    font-family: "Playfair Display", serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: auto; /* Pousse le bouton à l'extrême droite sur grand écran */
+}
+
+.filter-reset-btn:hover {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: #120d31;
+}
+
+/* ─────────────────────────────────────────
+   5. Responsive
+───────────────────────────────────────── */
+@media (max-width: 700px) {
+    .filter-bar {
+        flex-direction: column; /* Tout passe à la verticale */
+        align-items: stretch; /* Les champs prennent toute la largeur disponible */
+        padding: 1.2rem;
+    }
+
+    .filter-input {
+        width: 100%;
+    }
+
+    .filter-roles-container {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.8rem 0;
+    }
+
+    .filter-role-badge {
+        width: 100%; /* Les badges prennent toute la largeur sur mobile pour cliquer facilement */
+        text-align: center;
+    }
+
+    .filter-reset-btn {
+        width: 100%;
+        margin-left: 0; /* Annule le décalage à droite */
+        text-align: center;
+    }
+}

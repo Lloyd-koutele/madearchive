@@ -1,0 +1,112 @@
+import { useState } from 'react';
+import '../style/Page/Sidebar.css';
+import { getUserRoles, logout } from '../auth/authService';
+
+interface SidebarProps {
+    title: string;
+    children: React.ReactNode;
+}
+
+const ROLE_LABELS: Record<string, string> = {
+    ADMIN: 'Interface Administrateur',
+    EDITOR: 'Interface Éditeur',
+    USER: 'Interface Utilisateur'
+};
+
+const ROLE_ROUTES: Record<string, string> = {
+    ADMIN: '/admin',
+    EDITOR: '/editeur',
+    USER: '/user'
+};
+
+function Sidebar({ title, children }: SidebarProps) {
+    const [open, setOpen] = useState(true);
+    const initialLetter = title ? title.charAt(0).toUpperCase() : '';
+
+    const roles = getUserRoles();
+    const currentPath = window.location.pathname;
+    const currentRole = Object.entries(ROLE_ROUTES).find(([, path]) => currentPath.startsWith(path))?.[0] || '';
+
+    const handleRoleSwitch = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = e.target.value;
+    console.log('selected:', selected, 'currentRole:', currentRole);
+    console.log('route cible:', ROLE_ROUTES[selected]);
+    console.log('redirection dans 3s...');
+    
+    if (selected && selected !== currentRole) {
+        setTimeout(() => {
+            console.log('redirection vers:', ROLE_ROUTES[selected]);
+            window.location.replace(ROLE_ROUTES[selected]);
+        }, 3000);
+    } else {
+        console.log('blocked — selected === currentRole ou selected vide');
+    }
+};
+
+    const handleLogout = async () => {
+        await logout();
+        window.location.replace('/login');
+    };
+
+    console.log('pathname:', window.location.pathname);
+    console.log('roles:', roles);
+    console.log('currentRole détecté:', currentRole);
+
+    return (
+        <aside className={open ? 'sidebar sidebar-open' : 'sidebar sidebar-closed'}>
+            <div className='sidebar-header'>
+                <button
+                    onClick={() => setOpen(!open)}
+                    className='toggle-button'
+                    aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+                >
+                    <i className={open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars'}></i>
+                </button>
+            </div>
+
+            {open && title && (
+                <div className='sidebar-profile-header'>
+                    <div className='profile-logo-box'>
+                        {initialLetter}
+                    </div>
+                    <h2 className='profile-title'>{title.toUpperCase()} PANEL</h2>
+                </div>
+            )}
+
+            {/* Liste déroulante de switch — uniquement si 2 rôles ou plus */}
+            {open && roles.length >= 2 && (
+                <div className='sidebar-role-switcher'>
+                    <select
+                        value={currentRole}
+                        onChange={handleRoleSwitch}
+                        className='role-select'
+                        aria-label="Changer d'interface"
+                    >
+                        {roles.map(role => (
+                            <option key={role} value={role}>
+                                {ROLE_LABELS[role] || role}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
+
+            {open && (
+                <div className='sidebar-content'>
+                    {children}
+                </div>
+            )}
+
+            {open && (
+                <button
+                    className='logout-button'
+                    onClick={handleLogout}
+                >
+                    Se déconnecter
+                </button>
+            )}
+        </aside>
+    );
+}
+
+export default Sidebar;

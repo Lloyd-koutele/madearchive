@@ -1,0 +1,190 @@
+/* ─────────────────────────────────────────
+   Fichier : AdminDashboard.css
+   Mise en page globale du Panel Admin
+───────────────────────────────────────── */
+
+/* 1. Structure principale du Dashboard */
+.admin-dashboard {
+    min-height: 100vh;
+    background-color: #120d31; /* Ton fond sombre de référence */
+    color: #ffffff;
+}
+
+.admin-body {
+    display: flex; /* Aligne la Sidebar et le Main Content côte à côte */
+    min-height: 100vh;
+}
+
+/* 2. Espace de contenu principal (Filtres + Tableau + Pagination) */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-x: hidden; /* Évite les débordements horizontaux */
+}
+
+/* 3. Navigation & Éléments internes à la Sidebar */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px 10px;
+}
+
+.main-header {
+    margin-bottom: 12px;
+}
+
+.sidebar-btn {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: antiquewhite;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-family: "Playfair Display", serif;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.sidebar-btn:hover {
+    background: aquamarine;
+    color: #120d31;
+    border-color: aquamarine;
+    box-shadow: 0 4px 12px rgba(127, 255, 212, 0.2);
+}
+
+/* 4. Alertes Flash (Erreur & Succès) dans la Sidebar ou le contenu */
+.alert {
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: "Playfair Display", serif;
+    margin-top: 15px;
+    animation: alertSlideIn 0.3s ease;
+}
+
+.alert-error {
+    background: rgba(255, 107, 107, 0.15);
+    border-left: 4px solid #ff6b6b;
+    color: #ff8585;
+}
+
+.alert-success {
+    background: rgba(46, 204, 113, 0.15);
+    border-left: 4px solid #2ecc71;
+    color: #58d68d;
+}
+
+@keyframes alertSlideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* 5. Compteur d'utilisateurs filtrés */
+.users-count {
+    font-family: "Playfair Display", serif;
+    font-size: 1.05rem;
+    color: rgba(250, 235, 215, 0.7); /* antiquewhite atténué */
+    margin: 5px 0;
+}
+
+.users-count span {
+    color: aquamarine;
+    font-weight: bold;
+}
+
+/* 6. Style de la carte d'affichage détaillé (Modal View) */
+.user-details-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-family: "Playfair Display", serif;
+    color: #ffffff;
+    padding: 5px;
+}
+
+.details-row {
+    font-size: 1.05rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 10px;
+}
+
+.details-row strong {
+    color: antiquewhite;
+    font-weight: 600;
+    margin-right: 8px;
+    display: inline-block;
+    min-width: 160px; /* Aligne proprement les débuts de lignes */
+}
+
+/* Badges de Statut (Actif / Bloqué) */
+.status-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.status-tag.active {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border: 1px solid #2ecc71;
+}
+
+.status-tag.inactive {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+/* Bouton Fermer des détails */
+.details-close-btn {
+    align-self: flex-end;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: antiquewhite;
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: "Playfair Display", serif;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+}
+
+.details-close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+/* ─────────────────────────────────────────
+   7. Adaptabilité Mobile / Responsive
+───────────────────────────────────────── */
+@media (max-width: 900px) {
+    .admin-body {
+        flex-direction: column; /* La sidebar passe au-dessus sur tablette/mobile */
+    }
+
+    .main-content {
+        padding: 15px;
+    }
+    
+    .details-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .details-row strong {
+        min-width: auto;
+    }
+}

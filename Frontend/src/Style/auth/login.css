@@ -1,0 +1,223 @@
+/* ─────────────────────────────────────────
+   Fichier : login.css
+   Charte graphique de la page de connexion
+───────────────────────────────────────── */
+
+/* 1. Conteneur principal (Centrage absolu sur l'écran) */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #120d31; /* Fond sombre de référence */
+    padding: 20px;
+}
+
+/* 2. Carte de connexion */
+/* 2. Carte de connexion */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    
+    /* 💡 Ajout pour la compatibilité Safari / iOS */
+    -webkit-backdrop-filter: blur(10px); 
+    backdrop-filter: blur(10px); /* Effet verre dépoli */
+}
+
+/* 3. En-tête (Titres) */
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-title {
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.login-subtitle {
+    font-family: "Playfair Display", serif;
+    font-size: 0.95rem;
+    color: rgba(250, 235, 215, 0.6); /* antiquewhite avec opacité */
+}
+
+/* 4. Message d'erreur flash */
+.error-message {
+    background: rgba(255, 107, 107, 0.15);
+    border: 1px solid #ff6b6b;
+    color: #ff8585;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    font-family: "Playfair Display", serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    animation: loginErrorShake 0.3s ease-in-out;
+}
+
+@keyframes loginErrorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+/* 5. Structure du Formulaire et des Champs */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px; /* Espace optimisé pour l'élévation du label */
+}
+
+.field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.field-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: #ffffff;
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    font-family: "Playfair Display", serif;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field-input:focus {
+    border-color: aquamarine;
+    box-shadow: 0 0 8px rgba(127, 255, 212, 0.25);
+}
+
+/* Désactivation des champs pendant le chargement */
+.field-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Style des Labels Flottants */
+.field label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(250, 235, 215, 0.4);
+    font-size: 1rem;
+    font-family: "Playfair Display", serif;
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animation du label au focus ou quand le champ contient du texte */
+.field-input:focus ~ label,
+.field-input:not(:placeholder-shown) ~ label {
+    top: -8px;
+    left: 0.5rem;
+    transform: translateY(0) scale(0.85);
+    color: aquamarine;
+    background: #151035; /* Légèrement ajusté pour se fondre sur la carte */
+    padding: 0 6px;
+}
+
+/* 6. Bouton d'affichage du mot de passe (Icônes React) */
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: antiquewhite;
+    opacity: 0.6;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.password-toggle:hover:not(:disabled) {
+    opacity: 1;
+    color: aquamarine;
+}
+
+.password-toggle:disabled {
+    cursor: not-allowed;
+}
+
+/* Ajustement padding droit de l'input password pour éviter l'icône */
+#password {
+    padding-right: 3rem;
+}
+
+/* 7. Bloc des boutons d'actions (Soumission & Retour) */
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+/* Bouton principal de connexion */
+.login-button {
+    width: 100%;
+    background-color: aquamarine;
+    color: #120d31;
+    border: 1px solid aquamarine;
+    padding: 0.85rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: "Playfair Display", serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(127, 255, 212, 0.15);
+}
+
+.login-button:hover:not(:disabled) {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: #120d31;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.login-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: rgba(127, 255, 212, 0.5);
+    border-color: transparent;
+}
+
+/* Bouton secondaire de retour */
+.button-retour {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: antiquewhite;
+    padding: 0.85rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: "Playfair Display", serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.button-retour:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.5);
+}

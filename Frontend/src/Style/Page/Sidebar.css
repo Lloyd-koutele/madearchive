@@ -1,0 +1,215 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap");
+/* ─────────────────────────────────────────
+   Fichier : Sidebar.css
+   Cohérence avec la charte graphique globale
+───────────────────────────────────────── */
+
+/* 1. Structure principale de la Sidebar */
+.sidebar {
+    position: fixed;
+    top: 60px; /* Aligné juste sous le header fixe */
+    left: 0;
+    height: calc(100vh - 60px); /* Prend tout le reste de la hauteur */
+    background: rgba(18, 13, 49, 0.92); /* Fond sombre #120d31 transparent */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 900; /* Juste en dessous du header (1000) et des modales */
+    color: #ffffff;
+    font-family: "Playfair Display", serif;
+}
+
+.sidebar-open {
+    width: 280px;
+}
+
+.sidebar-closed {
+    width: 60px;
+}
+
+.sidebar-role-switcher {
+    padding: 0 1rem 1rem;
+}
+
+.role-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+    color: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.role-select:focus {
+    border-color: rgba(255,255,255,0.5);
+}
+
+.role-select option {
+    background: #1e1e2e; /* adapte à ta couleur de sidebar */
+    color: white;
+}
+
+/* 2. En-tête avec bouton Toggle (burger/croix) */
+.sidebar-header {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Aligné à droite par défaut */
+    padding: 0 1rem;
+}
+
+.sidebar-closed .sidebar-header {
+    justify-content: center; /* Centré quand la sidebar est fermée */
+    padding: 0;
+}
+
+.toggle-button {
+    background: transparent;
+    border: none;
+    color: antiquewhite;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.toggle-button:hover {
+    color: #7abdf5; /* Changement de couleur au survol */
+    transform: scale(1.1);
+}
+
+/* 3. Section Profil (Avatar + Titre du Panel) */
+.sidebar-profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    animation: fadeInSidebar 0.2s ease;
+}
+
+/* Boîte circulaire pour la première lettre */
+.profile-logo-box {
+    width: 70px;
+    height: 70px;
+    background-color: aquamarine; /* Couleur signature */
+    color: #120d31; /* Texte sombre pour le contraste */
+    font-size: 2rem;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 4px 10px rgba(127, 255, 212, 0.3); /* Léger halo lumineux */
+}
+
+.profile-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* 4. Contenu central (Menu / Liens / Children) */
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto; /* Permet de défiler si le menu contient beaucoup d'éléments */
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    animation: fadeInSidebar 0.3s ease;
+}
+
+/* Personnalisation de la scrollbar interne du menu */
+.sidebar-content::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+/* Style recommandé pour les éléments de liste que tu passeras dans {children} */
+.sidebar-content ul, .sidebar-content li {
+    width: 100%;
+}
+
+.sidebar-content a, .sidebar-content button:not(.logout-button) {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0.8rem 1rem;
+    color: antiquewhite;
+    border-radius: 5px;
+    transition: background 0.2s ease, color 0.2s ease;
+    width: 100%;
+    text-align: left;
+}
+
+.sidebar-content a:hover, .sidebar-content button:not(.logout-button):hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #7abdf5;
+}
+
+/* 5. Bouton de déconnexion (Bas de la Sidebar) */
+.logout-button {
+    background: transparent;
+    color: #ff6b6b; /* Couleur rouge soft pour l'action de déconnexion */
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    padding: 0.7rem;
+    margin: 1.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: "Playfair Display", serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    animation: fadeInSidebar 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+}
+
+/* Animation d'apparition des éléments à l'ouverture */
+@keyframes fadeInSidebar {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ─────────────────────────────────────────
+   6. Responsive & Adaptabilité Mobile
+───────────────────────────────────────── */
+@media (max-width: 700px) {
+    .sidebar {
+        height: calc(100vh - 60px);
+    }
+    
+    /* Sur mobile, pour éviter de bloquer l'écran, on la masque complètement ou on la superpose */
+    .sidebar-open {
+        width: 240px;
+        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+    }
+    
+    .sidebar-closed {
+        width: 0px; /* Totalement invisible sur mobile quand elle est fermée */
+        border-right: none;
+        overflow: hidden;
+    }
+}

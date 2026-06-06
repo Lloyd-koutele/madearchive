@@ -1,0 +1,211 @@
+/* ─────────────────────────────────────────
+   Fichier : UpdateUser.css
+   Cohérence avec la charte graphique globale
+───────────────────────────────────────── */
+
+/* 1. Alertes de retours (Erreur & Succès) */
+.form-error, .form-success {
+    padding: 0.8rem 1.2rem;
+    border-radius: 5px;
+    font-family: "Playfair Display", serif;
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    animation: formAlertFade 0.3s ease;
+}
+
+.form-error {
+    background: rgba(255, 107, 107, 0.15);
+    border: 1px solid #ff6b6b;
+    color: #ff8585;
+}
+
+.form-success {
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid #2ecc71;
+    color: #58d68d;
+}
+
+@keyframes formAlertFade {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 2. Organisation de la Grille de Formulaire */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 11fr); /* Grille moderne à 2 colonnes */
+    gap: 24px 20px; /* Espace vertical plus grand pour laisser respirer les labels flottants */
+    font-family: "Playfair Display", serif;
+}
+
+/* 3. Style des champs individuels (Champs textuels avec Labels Flottants) */
+.form-field {
+    position: relative; /* Indispensable pour le positionnement absolu du label */
+    display: flex;
+    flex-direction: column;
+}
+
+.form-field-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: #ffffff;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    font-family: "Playfair Display", serif;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Effet de focus sur l'input */
+.form-field-input:focus {
+    border-color: aquamarine;
+    box-shadow: 0 0 5px rgba(127, 255, 212, 0.3);
+}
+
+/* Positionnement initial du label par défaut (simule un placeholder) */
+.form-field label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(250, 235, 215, 0.5); /* antiquewhite translucide */
+    font-size: 1rem;
+    pointer-events: none; /* Laisse le clic traverser vers l'input */
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Logique de l'animation du label flottant : quand l'input est focus OU non vide */
+.form-field-input:focus ~ label,
+.form-field-input:not(:placeholder-shown) ~ label {
+    top: -8px;
+    left: 0.5rem;
+    transform: translateY(0) scale(0.85);
+    color: aquamarine;
+    background: #120d31; /* Même fond que ton container pour masquer la bordure derrière */
+    padding: 0 6px;
+}
+
+/* 4. Cas Spécifique : Champ Mot de passe avec bouton œil */
+.form-field-password {
+    position: relative;
+}
+
+.form-field-password .form-field-input {
+    padding-right: 3rem; /* Espace pour pas que le texte passe sous l'œil */
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: antiquewhite;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.password-toggle-btn:hover {
+    color: aquamarine;
+}
+
+/* Ajustement du label flottant spécifique au mot de passe pour gérer le bouton d'œil */
+.form-field-password .form-field-input:focus ~ label,
+.form-field-password .form-field-input:not(:placeholder-shown) ~ label {
+    top: -8px;
+    transform: translateY(0) scale(0.85);
+}
+
+/* 5. Section des Rôles (Fieldset / Checkboxes) */
+.form-field-roles {
+    grid-column: span 2; /* Prend toute la largeur du formulaire */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 1.2rem;
+    background: rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+}
+
+.roles-label {
+    color: antiquewhite;
+    font-weight: bold;
+    font-size: 0.95rem;
+    padding: 0 10px;
+}
+
+.checkbox-group {
+    display: flex;
+    gap: 25px;
+    margin-top: 0.5rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none; /* Fix Safari inclus ! */
+}
+
+/* Optionnel : Légère colorisation de la checkbox native */
+.checkbox-label input[type="checkbox"] {
+    accent-color: aquamarine;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* 6. Bouton de soumission global */
+.form-submit-btn {
+    grid-column: span 2; /* Centré ou pleine largeur en bas */
+    background-color: aquamarine;
+    color: #120d31;
+    border: 1px solid aquamarine;
+    padding: 0.8rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: "Playfair Display", serif;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(127, 255, 212, 0.15);
+}
+
+.form-submit-btn:hover {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: #120d31;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* ─────────────────────────────────────────
+   7. Responsive
+───────────────────────────────────────── */
+@media (max-width: 700px) {
+    .form-grid {
+        grid-template-columns: 1fr; /* Passage sur une seule colonne sur mobile */
+        gap: 22px;
+    }
+
+    .form-field-roles, .form-submit-btn {
+        grid-column: span 1; /* S'ajuste sur la colonne unique */
+    }
+
+    .checkbox-group {
+        flex-direction: column; /* Empile les cases à cocher sur mobile */
+        gap: 12px;
+    }
+}

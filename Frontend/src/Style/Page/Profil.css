@@ -1,0 +1,99 @@
+/* ─────────────────────────────────────────
+   Fichier : Profile.css
+   Style dédié au composant Profil
+───────────────────────────────────────── */
+
+.profile-view-container {
+    padding: 10px;
+    animation: profileFadeIn 0.4s ease;
+}
+
+.profile-title {
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    color: #ffffff;
+    text-align: left;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+/* Conteneur de la carte profil */
+.profile-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Bouton spécifique pour basculer en mode édition */
+.profile-edit-btn {
+    align-self: flex-start;
+    background-color: aquamarine;
+    color: #120d31;
+    border: 1px solid aquamarine;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    font-family: "Playfair Display", serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 15px;
+    box-shadow: 0 4px 12px rgba(127, 255, 212, 0.15);
+}
+
+.profile-edit-btn:hover {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Messages de retour internes au profil */
+.profile-alert {
+    padding: 12px;
+    border-radius: 5px;
+    font-family: "Playfair Display", serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.profile-alert-error {
+    background: rgba(255, 107, 107, 0.15);
+    border: 1px solid #ff6b6b;
+    color: #ff8585;
+}
+
+.profile-alert-success {
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid #2ecc71;
+    color: #58d68d;
+}
+
+/* Alignement sur toute la largeur de la grille pour le champ password */
+.profile-field-fullwidth {
+    grid-column: span 2;
+}
+
+/* Zone des boutons d'action du bas du formulaire */
+.profile-form-actions {
+    grid-column: span 2;
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* Forcer la réinitialisation des marges et l'adaptation de la largeur des boutons */
+.profile-btn-reset {
+    margin: 0 !important;
+    width: auto !important;
+}
+
+/* Animation d'apparition de la vue */
+@keyframes profileFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
