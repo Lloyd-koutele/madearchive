@@ -1,211 +1,193 @@
-/* ─────────────────────────────────────────
-   Fichier : CreateUser.css
-   Cohérence avec la charte graphique globale
-───────────────────────────────────────── */
-
-/* 1. Alertes de retours (Erreur & Succès) */
-.form-error, .form-success {
-    padding: 0.8rem 1.2rem;
-    border-radius: 5px;
-    font-family: "Playfair Display", serif;
-    font-size: 0.95rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
-    animation: formAlertFade 0.3s ease;
-}
-
+/* ─── CreateUser ─── */
 .form-error {
-    background: rgba(255, 107, 107, 0.15);
-    border: 1px solid #ff6b6b;
-    color: #ff8585;
+    padding: 0.65rem 1rem;
+    background: rgba(155,58,58,0.1);
+    color: var(--error);
+    border: 1px solid rgba(155,58,58,0.2);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
 }
 
 .form-success {
-    background: rgba(46, 204, 113, 0.15);
-    border: 1px solid #2ecc71;
-    color: #58d68d;
+    padding: 0.65rem 1rem;
+    background: rgba(74,124,89,0.1);
+    color: var(--success);
+    border: 1px solid rgba(74,124,89,0.2);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
 }
 
-@keyframes formAlertFade {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* 2. Organisation de la Grille de Formulaire */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Grille à 2 colonnes équitables */
-    gap: 24px 20px; /* Plus d'espace vertical pour l'envolée du label flottant */
-    font-family: "Playfair Display", serif;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
 }
 
-/* 3. Style des champs individuels (Inputs textuels avec Labels Flottants) */
+/* Champ flottant */
 .form-field {
-    position: relative; /* Clé pour le placement absolu du label */
+    position: relative;
     display: flex;
     flex-direction: column;
 }
 
 .form-field-input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
-    color: #ffffff;
-    padding: 0.8rem 1rem;
-    font-size: 1rem;
-    font-family: "Playfair Display", serif;
+    padding: 1.1rem 0.85rem 0.35rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    color: var(--dark-choc);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
 }
 
-/* Effet de focus sur l'input */
 .form-field-input:focus {
-    border-color: aquamarine;
-    box-shadow: 0 0 5px rgba(127, 255, 212, 0.3);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(139,94,60,0.12);
+    background: var(--white-choc);
 }
 
-/* Positionnement initial du label (joue le rôle de placeholder factice) */
 .form-field label {
     position: absolute;
-    left: 1rem;
+    left: 0.85rem;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(250, 235, 215, 0.5); /* antiquewhite avec opacité */
-    font-size: 1rem;
-    pointer-events: none; /* Permet de cliquer à travers le texte */
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.88rem;
+    color: var(--text-light);
+    pointer-events: none;
+    transition: all 0.15s ease;
+    background: transparent;
 }
 
-/* Logique d'animation du label flottant : actif au focus OU quand l'input n'est pas vide */
 .form-field-input:focus ~ label,
 .form-field-input:not(:placeholder-shown) ~ label {
-    top: -8px;
-    left: 0.5rem;
-    transform: translateY(0) scale(0.85);
-    color: aquamarine;
-    background: #120d31; /* Fond sombre pour couper proprement la bordure de l'input */
-    padding: 0 6px;
+    top: 0.38rem;
+    font-size: 0.72rem;
+    color: var(--accent);
+    transform: none;
 }
 
-/* 4. Cas Spécifique : Champ Mot de passe avec icône œil */
+/* Password */
 .form-field-password {
     position: relative;
+    grid-column: 1 / -1;
 }
 
 .form-field-password .form-field-input {
-    padding-right: 3rem; /* Empêche le texte saisi d'entrer en collision avec le bouton */
+    padding-right: 2.8rem;
 }
 
 .password-toggle-btn {
     position: absolute;
-    right: 10px;
+    right: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    background: transparent;
+    background: none;
     border: none;
-    color: antiquewhite;
-    font-size: 1.1rem;
+    color: var(--text-light);
     cursor: pointer;
-    padding: 0.5rem;
+    font-size: 0.95rem;
+    padding: 0.2rem;
+    transition: color var(--transition);
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: color 0.2s ease;
 }
 
-.password-toggle-btn:hover {
-    color: aquamarine;
-}
+.password-toggle-btn:hover { color: var(--dark-choc); }
 
-/* Ajustement de l'envolée du label spécifique au mot de passe */
-.form-field-password .form-field-input:focus ~ label,
-.form-field-password .form-field-input:not(:placeholder-shown) ~ label {
-    top: -8px;
-    transform: translateY(0) scale(0.85);
-}
-
-/* 5. Section de sélection des Rôles (Fieldset / Checkboxes) */
+/* Rôles */
 .form-field-roles {
-    grid-column: span 2; /* S'étend sur les deux colonnes de la grille */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    padding: 1.2rem;
-    background: rgba(0, 0, 0, 0.1);
-    margin-top: 5px;
+    grid-column: 1 / -1;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    background: var(--cream);
 }
 
 .roles-label {
-    color: antiquewhite;
-    font-weight: bold;
-    font-size: 0.95rem;
-    padding: 0 10px;
+    font-size: 0.78rem;
+    color: var(--text-light);
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: block;
 }
 
 .checkbox-group {
     display: flex;
-    gap: 25px;
-    margin-top: 0.5rem;
+    gap: 1.25rem;
+    flex-wrap: wrap;
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: #ffffff;
-    font-size: 0.95rem;
+    gap: 0.45rem;
+    font-size: 0.88rem;
+    color: var(--dark-choc);
     cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none; /* Correctif de sélection pour Safari */
+    font-weight: 400;
+    transition: color var(--transition);
 }
 
-/* Personnalisation légère de la checkbox native */
+.checkbox-label:hover { color: var(--accent); }
+
 .checkbox-label input[type="checkbox"] {
-    accent-color: aquamarine;
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
+    accent-color: var(--dark-choc);
     cursor: pointer;
 }
 
-/* 6. Bouton de soumission global */
+/* Submit */
 .form-submit-btn {
-    grid-column: span 2;
-    background-color: aquamarine;
-    color: #120d31;
-    border: 1px solid aquamarine;
-    padding: 0.8rem;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: bold;
+    grid-column: 1 / -1;
+    padding: 0.7rem 1.4rem;
+    background: var(--dark-choc);
+    color: var(--white-choc);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    font-family: "Playfair Display", serif;
-    transition: all 0.2s ease;
-    margin-top: 10px;
-    box-shadow: 0 4px 12px rgba(127, 255, 212, 0.15);
+    transition: background var(--transition), box-shadow var(--transition);
+    margin-top: 0.25rem;
 }
 
 .form-submit-btn:hover {
-    background-color: #ffffff;
-    border-color: #ffffff;
-    color: #120d31;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    background: var(--dark-mid);
+    box-shadow: 0 0 0 3px rgba(44,26,14,0.12);
 }
 
-/* ─────────────────────────────────────────
-   7. Responsive (Écrans Mobiles)
-───────────────────────────────────────── */
-@media (max-width: 700px) {
-    .form-grid {
-        grid-template-columns: 1fr; /* Passage automatique à une seule colonne */
-        gap: 22px;
-    }
+/* Responsive */
+@media (max-width: 500px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-field-password { grid-column: 1; }
+    .form-field-roles { grid-column: 1; }
+    .form-submit-btn { grid-column: 1; }
+}
 
-    .form-field-roles, .form-submit-btn {
-        grid-column: span 1; /* Aligné sur l'unique colonne */
-    }
+/* Fix autofill navigateur */
+.form-field-input:-webkit-autofill,
+.form-field-input:-webkit-autofill:hover,
+.form-field-input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--cream) inset;
+    -webkit-text-fill-color: var(--dark-choc);
+    transition: background-color 5000s ease-in-out 0s;
+}
 
-    .checkbox-group {
-        flex-direction: column; /* Alignement vertical des checkboxes sur mobile */
-        gap: 12px;
-    }
+/* Fix label flottant quand autofill */
+.form-field-input:-webkit-autofill ~ label {
+    top: 0.38rem;
+    font-size: 0.72rem;
+    color: var(--accent);
+    transform: none;
 }

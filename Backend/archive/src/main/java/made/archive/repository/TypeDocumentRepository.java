@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface TypeDocumentRepository extends JpaRepository<TypeDocument, Long>
 {
-    Optional<TypeDocument> findByName(String name);
+    Optional<TypeDocument> findByNom(String nom);
 
     @Query("SELECT t FROM TypeDocument t WHERE t.user.id = :userId")
     List<TypeDocument> findByTypeDocumentCreateByUserId(@Param("userId") UUID userId);

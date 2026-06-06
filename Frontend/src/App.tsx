@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import Login from './auth/Login.tsx';
 import Home from './Page/Home.tsx';
 import AdminDashboard from './Admin/AdminDahboard.tsx';
+import './style/global.css'
 
 import { getUserRole, hasRole } from './auth/authService';
 

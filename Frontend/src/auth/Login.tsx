@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { loginUser } from './authService';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import '../style/auth/login.css';
+import '../Style/auth/login.css';
 
 function Login() {
   const [email, setEmail] = useState('');

@@ -42,14 +42,30 @@ public class TypeDocumentService
         }
     }
 
+    @Transactional
     public TypeDocument getTypeDocumentById(Long id)
     {
-        return typeDocumentRepository.findById(id).orElse(null);
+        try 
+        {
+            return typeDocumentRepository.findById(id).orElse(null);
+        } 
+        catch (Exception e) 
+        {
+            throw new RuntimeException("Erreur lors de la récupération du type le type de documents");
+        }
     }
 
+    @Transactional
     public TypeDocument getTypeDocumentByName(String name)
     {
-        return typeDocumentRepository.findByName(name).orElse(null);
+        try 
+        {
+            return typeDocumentRepository.findByNom(name).orElse(null);
+        } 
+        catch (Exception e) 
+        {
+            throw new RuntimeException("Erreur lors de la récupération du type le type de documents");
+        }
     }
 
     @Transactional
@@ -79,6 +95,28 @@ public class TypeDocumentService
         }
     }
 
+    @Transactional
+    public void deleteListTypeDocumentBestEffort(List<Long> ids) 
+    {
+        List<String> errors = new ArrayList<>();
+    
+        for (Long id : ids)
+        {
+            try 
+            {
+                deleteTypeDocumentById(id);
+            } 
+            catch (BusinessException e) 
+            {
+                errors.add("ID " + id + " : " + e.getMessage());
+            }
+        }
+        if (!errors.isEmpty()) 
+        {
+            throw new BusinessException("Certains types de documents n'ont pas pu être supprimés : " + String.join(" | ", errors));
+        }
+    }
+
 
     @Transactional
     public TypeDocument findById(Long id) 
@@ -104,7 +142,7 @@ public class TypeDocumentService
     public TypeDocumentDto createTypeDocument(TypeDocumentDto dto) 
     {
         try {
-            if (typeDocumentRepository.findByName(dto.getNom()).isPresent()) {
+            if (typeDocumentRepository.findByNom(dto.getNom()).isPresent()) {
                 throw new BusinessException("Un type de document avec ce nom existe déjà");
             }
             if (dto.getMetaData() == null || dto.getMetaData().isEmpty()) {
@@ -175,7 +213,7 @@ public class TypeDocumentService
 
             if (!typeDocument.getNom().equalsIgnoreCase(dto.getNom())) 
             {
-                typeDocumentRepository.findByName(dto.getNom()).ifPresent(t -> 
+                typeDocumentRepository.findByNom(dto.getNom()).ifPresent(t -> 
                 {
                     throw new BusinessException("Ce nom est déjà utilisé");
                 });
@@ -187,7 +225,7 @@ public class TypeDocumentService
             {
                 currentRetention.setRetentionYears(dto.getRetentionYears());
             }
-            if (dto.getPeriodGrace() != null) 
+            if (dto.getPeriodGrace() != null)  
             {
                 currentRetention.setPeriodGrace(dto.getPeriodGrace());
             }

@@ -1,184 +1,161 @@
-/* ─────────────────────────────────────────
-   Fichier : UserTable.css
-   Cohérence avec la charte graphique globale
-───────────────────────────────────────── */
-
-/* 1. Conteneur externe (Gestion du débordement responsive) */
+/* ─── UserTable ─── */
 .table-container {
     width: 100%;
-    background: rgba(18, 13, 49, 0.85); /* Fond sombre #120d31 */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    overflow-x: auto; /* Défilement horizontal si le tableau est trop large */
-    margin-top: 1rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    background: var(--white-choc);
 }
 
-/* Personnalisation de la scrollbar horizontale du tableau pour rester harmonieux */
-.table-container::-webkit-scrollbar {
-    height: 6px;
-}
-.table-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-}
-.table-container::-webkit-scrollbar-thumb {
-    background: aquamarine; /* Rappel couleur principale */
-    border-radius: 3px;
-}
-
-/* 2. Structure du Tableau */
 .user-table {
     width: 100%;
     border-collapse: collapse;
-    font-family: "Playfair Display", serif;
+    font-size: 0.875rem;
+}
+
+.user-table thead {
+    background-color: var(--dark-choc);
+}
+
+.user-table thead th {
+    padding: 0.85rem 1rem;
     text-align: left;
-    min-width: 800px; /* Garantit que le tableau garde une structure lisible même sur petit écran */
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(253,248,243,0.7);
+    white-space: nowrap;
 }
 
-/* En-tête (Th) */
-.user-table th {
-    background: rgba(0, 0, 0, 0.3);
-    color: antiquewhite; /* Même couleur que tes liens */
-    font-weight: bold;
-    padding: 1rem 1.2rem;
-    font-size: 1rem;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.15);
-    letter-spacing: 0.5px;
+.user-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background var(--transition);
 }
 
-/* Lignes et Cellules (Tr / Td) */
-.user-table td {
-    padding: 1rem 1.2rem;
-    color: #f0f0f0;
-    font-size: 0.95rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+.user-table tbody tr:last-child { border-bottom: none; }
+
+.user-table tbody tr:hover { background-color: var(--cream); }
+
+.user-table tbody td {
+    padding: 0.8rem 1rem;
+    color: var(--dark-choc);
+    font-size: 0.875rem;
     vertical-align: middle;
 }
 
-/* Effet au survol d'une ligne */
-.user-table tbody tr {
-    transition: background-color 0.2s ease;
-}
-.user-table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.03);
-}
-
-/* 3. Zone des boutons d'actions (Cellule finale) */
+/* Actions */
 .actions-cell-container {
     display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 8px; /* Espacement serré mais distinct pour les actions */
-    flex-wrap: nowrap;
 }
 
-/* Style de base partagé par tous les boutons du tableau */
-.actions-cell-container button {
-    padding: 0.4rem 0.9rem;
-    border-radius: 4px;
-    font-family: "Playfair Display", serif;
-    font-size: 0.85rem;
-    font-weight: bold;
+.action-button.view {
+    padding: 0.35rem 0.85rem;
+    background: var(--white-choc);
+    color: var(--dark-choc);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s ease;
-    outline: none;
+    transition: background var(--transition), border-color var(--transition);
 }
 
-.actions-cell-container button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* Bouton VOIR (Style transparent / pro) */
-.action-button.view {
-    background: transparent;
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
 .action-button.view:hover {
-    background: #fff;
-    border-color: #fff;
-    color: #120d31;
+    background: var(--cream);
+    border-color: var(--accent);
 }
 
-/* Bouton MODIFIER (Style Aquamarine signature) */
 .action-button.edit {
-    background-color: aquamarine;
-    color: #120d31;
-    border: 1px solid aquamarine;
+    padding: 0.35rem 0.85rem;
+    background: var(--dark-choc);
+    color: var(--white-choc);
+    border: 1.5px solid var(--dark-choc);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background var(--transition), box-shadow var(--transition);
 }
+
 .action-button.edit:hover {
-    background-color: #fff;
-    border-color: #fff;
-    color: #120d31;
+    background: var(--dark-mid);
+    box-shadow: 0 0 0 3px rgba(44,26,14,0.1);
 }
 
-/* Bouton BLOQUER / DEBLOQUER (Dynamique) */
 .block-unblock {
-    background: transparent;
-    font-family: "Playfair Display", serif;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    border: 1.5px solid;
+    transition: background var(--transition), box-shadow var(--transition);
 }
 
-/* Statut : l'utilisateur est actuellement Actif -> Le bouton propose de le "Bloquer" */
 .block-unblock.is-active {
-    color: #ffb03b; /* Orange doux d'avertissement */
-    border: 1px solid rgba(255, 176, 59, 0.4);
+    background: rgba(74,124,89,0.1);
+    color: var(--success);
+    border-color: rgba(74,124,89,0.25);
 }
+
 .block-unblock.is-active:hover {
-    background-color: #ffb03b;
-    border-color: #ffb03b;
-    color: #120d31;
+    background: rgba(74,124,89,0.18);
+    box-shadow: 0 0 0 3px rgba(74,124,89,0.1);
 }
 
-/* Statut : l'utilisateur est actuellement Bloqué -> Le bouton affiche "Débloquer" ou son état passif */
 .block-unblock.is-blocked {
-    color: #2ecc71; /* Vert soft pour réactiver */
-    border: 1px solid rgba(46, 204, 113, 0.4);
+    background: rgba(155,58,58,0.08);
+    color: var(--error);
+    border-color: rgba(155,58,58,0.2);
 }
+
 .block-unblock.is-blocked:hover {
-    background-color: #2ecc71;
-    border-color: #2ecc71;
-    color: #120d31;
+    background: rgba(155,58,58,0.15);
+    box-shadow: 0 0 0 3px rgba(155,58,58,0.1);
 }
 
-/* Bouton SUPPRIMER */
-.delete-btn {
-    background: transparent;
-    color: #ff6b6b; /* Rouge doux */
-    border: 1px solid rgba(255, 107, 107, 0.4);
-}
-.delete-btn:hover {
-    background-color: #ff6b6b;
-    border-color: #ff6b6b;
-    color: #ffffff;
-    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
-/* 4. État vide (Aucun utilisateur trouvé) */
+/* Empty state */
 .empty-state {
-    width: 100%;
-    background: rgba(18, 13, 49, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 3rem 2rem;
     text-align: center;
-    color: #ffffff;
-    font-family: "Playfair Display", serif;
+    padding: 3rem 1rem;
+    color: var(--text-light);
+    background: var(--white-choc);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
 }
 
 .empty-state h3 {
-    font-size: 1.4rem;
-    color: antiquewhite;
-    margin-bottom: 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--dark-soft);
+    margin-bottom: 0.4rem;
 }
 
-.empty-state p {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.95rem;
-}
+.empty-state p { font-size: 0.875rem; }
 
-/* 5. Support Safari pour l'overflow et le scroll */
-.table-container {
-    -webkit-overflow-scrolling: touch; /* Défilement fluide sur iOS */
+/* Responsive */
+@media (max-width: 768px) {
+    .user-table thead th,
+    .user-table tbody td { padding: 0.65rem 0.75rem; }
+
+    .action-button.view,
+    .action-button.edit,
+    .block-unblock { padding: 0.3rem 0.65rem; font-size: 0.75rem; }
 }

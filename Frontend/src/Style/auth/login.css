@@ -1,82 +1,67 @@
-/* ─────────────────────────────────────────
-   Fichier : login.css
-   Charte graphique de la page de connexion
-───────────────────────────────────────── */
-
-/* 1. Conteneur principal (Centrage absolu sur l'écran) */
+/* ─── Login ─── */
 .login-container {
     min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    background-color: #120d31; /* Fond sombre de référence */
-    padding: 20px;
+    justify-content: center;
+    padding: 1.5rem;
 }
 
-/* 2. Carte de connexion */
-/* 2. Carte de connexion */
 .login-card {
+    background: rgba(253, 248, 243, 0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem 2.25rem;
     width: 100%;
     max-width: 420px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 2.5rem 2rem;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-    
-    /* 💡 Ajout pour la compatibilité Safari / iOS */
-    -webkit-backdrop-filter: blur(10px); 
-    backdrop-filter: blur(10px); /* Effet verre dépoli */
+    box-shadow: var(--shadow-lg);
 }
 
-/* 3. En-tête (Titres) */
+/* Header */
 .login-header {
-    text-align: center;
     margin-bottom: 2rem;
+    text-align: center;
 }
 
 .login-title {
-    font-family: "Playfair Display", serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 2rem;
-    color: #ffffff;
-    margin-bottom: 0.5rem;
     font-weight: 700;
+    color: var(--dark-choc);
+    letter-spacing: 0.3px;
+    margin-bottom: 0.4rem;
 }
 
 .login-subtitle {
-    font-family: "Playfair Display", serif;
-    font-size: 0.95rem;
-    color: rgba(250, 235, 215, 0.6); /* antiquewhite avec opacité */
+    font-size: 0.875rem;
+    color: var(--text-light);
+    font-weight: 400;
+    line-height: 1.5;
 }
 
-/* 4. Message d'erreur flash */
+/* Error */
 .error-message {
-    background: rgba(255, 107, 107, 0.15);
-    border: 1px solid #ff6b6b;
-    color: #ff8585;
-    padding: 0.75rem 1rem;
-    border-radius: 5px;
-    font-family: "Playfair Display", serif;
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
+    padding: 0.65rem 1rem;
+    background: rgba(155, 58, 58, 0.1);
+    color: var(--error);
+    border: 1px solid rgba(155, 58, 58, 0.2);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
     text-align: center;
-    animation: loginErrorShake 0.3s ease-in-out;
 }
 
-@keyframes loginErrorShake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-}
-
-/* 5. Structure du Formulaire et des Champs */
+/* Form */
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 24px; /* Espace optimisé pour l'élévation du label */
+    gap: 1rem;
 }
 
+/* Champ flottant */
 .field {
     position: relative;
     display: flex;
@@ -85,139 +70,139 @@
 
 .field-input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
-    color: #ffffff;
-    padding: 0.85rem 1rem;
-    font-size: 1rem;
-    font-family: "Playfair Display", serif;
+    padding: 1.1rem 0.9rem 0.35rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    color: var(--dark-choc);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
 }
 
 .field-input:focus {
-    border-color: aquamarine;
-    box-shadow: 0 0 8px rgba(127, 255, 212, 0.25);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(139, 94, 60, 0.12);
+    background: var(--white-choc);
 }
 
-/* Désactivation des champs pendant le chargement */
 .field-input:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
-/* Style des Labels Flottants */
 .field label {
     position: absolute;
-    left: 1rem;
+    left: 0.9rem;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(250, 235, 215, 0.4);
-    font-size: 1rem;
-    font-family: "Playfair Display", serif;
+    font-size: 0.88rem;
+    color: var(--text-light);
     pointer-events: none;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease;
 }
 
-/* Animation du label au focus ou quand le champ contient du texte */
 .field-input:focus ~ label,
 .field-input:not(:placeholder-shown) ~ label {
-    top: -8px;
-    left: 0.5rem;
-    transform: translateY(0) scale(0.85);
-    color: aquamarine;
-    background: #151035; /* Légèrement ajusté pour se fondre sur la carte */
-    padding: 0 6px;
+    top: 0.38rem;
+    font-size: 0.72rem;
+    color: var(--accent);
+    transform: none;
 }
 
-/* 6. Bouton d'affichage du mot de passe (Icônes React) */
+/* Password toggle */
 .password-toggle {
     position: absolute;
-    right: 12px;
+    right: 0.8rem;
     top: 50%;
     transform: translateY(-50%);
-    background: transparent;
+    background: none;
     border: none;
-    color: antiquewhite;
-    opacity: 0.6;
-    font-size: 1.2rem;
+    color: var(--text-light);
     cursor: pointer;
+    font-size: 0.95rem;
+    padding: 0.2rem;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    transition: color var(--transition);
 }
 
-.password-toggle:hover:not(:disabled) {
-    opacity: 1;
-    color: aquamarine;
-}
+.password-toggle:hover { color: var(--dark-choc); }
+.password-toggle:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.password-toggle:disabled {
-    cursor: not-allowed;
-}
-
-/* Ajustement padding droit de l'input password pour éviter l'icône */
-#password {
-    padding-right: 3rem;
-}
-
-/* 7. Bloc des boutons d'actions (Soumission & Retour) */
+/* Buttons container */
 .container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
+    gap: 0.65rem;
+    margin-top: 0.5rem;
 }
 
-/* Bouton principal de connexion */
 .login-button {
     width: 100%;
-    background-color: aquamarine;
-    color: #120d31;
-    border: 1px solid aquamarine;
-    padding: 0.85rem;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: bold;
-    font-family: "Playfair Display", serif;
+    padding: 0.75rem;
+    background: var(--dark-choc);
+    color: var(--white-choc);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(127, 255, 212, 0.15);
+    transition: background var(--transition), box-shadow var(--transition);
+    letter-spacing: 0.2px;
 }
 
 .login-button:hover:not(:disabled) {
-    background-color: #ffffff;
-    border-color: #ffffff;
-    color: #120d31;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    background: var(--dark-mid);
+    box-shadow: 0 0 0 3px rgba(44, 26, 14, 0.12);
 }
 
 .login-button:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
     cursor: not-allowed;
-    background-color: rgba(127, 255, 212, 0.5);
-    border-color: transparent;
 }
 
-/* Bouton secondaire de retour */
 .button-retour {
     width: 100%;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: antiquewhite;
-    padding: 0.85rem;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-family: "Playfair Display", serif;
+    padding: 0.7rem;
+    background: var(--white-choc);
+    color: var(--dark-soft);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background var(--transition), border-color var(--transition);
 }
 
 .button-retour:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.5);
+    background: var(--cream);
+    border-color: var(--accent);
+}
+
+/* Fix autofill navigateur */
+.field-input:-webkit-autofill,
+.field-input:-webkit-autofill:hover,
+.field-input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--cream) inset;
+    -webkit-text-fill-color: var(--dark-choc);
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Fix label flottant quand autofill */
+.field-input:-webkit-autofill ~ label {
+    top: 0.38rem;
+    font-size: 0.72rem;
+    color: var(--accent);
+    transform: none;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 2rem 1.5rem;
+    }
 }
