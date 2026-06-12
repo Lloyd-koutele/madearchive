@@ -108,3 +108,13 @@
     .admin-body { flex-direction: column; }
     .main-content { padding: 1rem; }
 }
+
+/* Label de section sidebar */
+.sidebar-section-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: rgba(253,248,243,0.3);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0.9rem 0.85rem 0.3rem;
+}

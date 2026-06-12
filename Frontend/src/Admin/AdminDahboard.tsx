@@ -5,6 +5,8 @@ import UserTable from "./UserTable";
 import UpdateUser from "./UpdateUser";
 import Modal from "../Page/Modal";
 import Profile from "../Page/Profil";
+import TypeDocumentList from "../document/TypedocumentList";
+import CreateTypeDocument from "../document/Createtypedocument";
 import { getAllUsers as AllUsers } from "../services/admin/AdminService";
 import { updateUserStatus as updateStatus } from "../services/admin/AdminService";
 import "../style/Admin/AdminDashboard.css";
@@ -31,46 +33,42 @@ interface UserFilters {
     prenom: string;
     email: string;
     telephone: string;
-    roles: string[]; // Synchronisé avec la modification de FilterUsers
+    roles: string[];
 }
+
+// Vues disponibles dans le main-content
+type AdminView = 'users' | 'profile' | 'type-documents';
 
 function AdminDashboard() {
     const [users, setUsers] = useState<User[]>([]);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
-    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
-    const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
-    
+    const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [isCreateTdModalOpen, setIsCreateTdModalOpen] = useState(false);
+
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [viewingUser, setViewingUser] = useState<User | null>(null);
-    
-    const [actionInProgress, setActionInProgress] = useState<boolean>(false);
-    const [error, setError] = useState<string>("");
-    const [success, setSuccess] = useState<string>("");
-    
-    const userInfo = getCurrentUserInfo(); 
-    const [isOpen, setIsOpen] = useState<boolean>(true);
-    
-    // 💡 Gestion de l'affichage dans le main-content ('list' affiche le tableau complet, 'profile' affiche le composant de l'admin)
-    const [currentView, setCurrentView] = useState<'list' | 'profile'>('list');
-    
+
+    const [actionInProgress, setActionInProgress] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+
+    const userInfo = getCurrentUserInfo();
+    const [currentView, setCurrentView] = useState<AdminView>('users');
+    const [tdRefresh, setTdRefresh] = useState(0);
+
     const [filters, setFilters] = useState<UserFilters>({
         nom: '', prenom: '', email: '', telephone: '', roles: []
     });
-
-    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+    useEffect(() => { fetchUsers(); }, []);
 
     useEffect(() => {
         if (error || success) {
-            const timer = setTimeout(() => {
-                setError("");
-                setSuccess("");
-            }, 2000);
-            return () => clearTimeout(timer);
+            const t = setTimeout(() => { setError(''); setSuccess(''); }, 2500);
+            return () => clearTimeout(t);
         }
     }, [error, success]);
 
@@ -78,42 +76,27 @@ function AdminDashboard() {
         try {
             const data = await AllUsers();
             setUsers(data);
-        } catch (err) {
-            console.error("Erreur lors de la récupération des utilisateurs: ", err);
+        } catch {
             setError("Erreur lors de la récupération des utilisateurs");
         }
     };
 
     const handleAction = async (userId: string, action: 'edit' | 'block-unblock' | 'delete' | 'view') => {
-        setError("");
-        setSuccess("");
-        
-        const targetUser = users.find((u) => u.id === userId);
+        setError(''); setSuccess('');
+        const targetUser = users.find(u => u.id === userId);
         if (!targetUser) return;
 
-        if (action === "view") {
-            setViewingUser(targetUser);
-            setIsViewModalOpen(true);
-            return;
-        }
+        if (action === 'view') { setViewingUser(targetUser); setIsViewModalOpen(true); return; }
+        if (action === 'edit') { setSelectedUser(targetUser); setIsUpdateModalOpen(true); return; }
 
-        if (action === "edit") {
-            setSelectedUser(targetUser);
-            setIsUpdateModalOpen(true);
-            return;
-        }
-
-        if (action === "block-unblock") {
+        if (action === 'block-unblock') {
             setActionInProgress(true);
             try {
-                const isActif = targetUser.actif === true || targetUser.actif === "true";
-                const newStatus = !isActif;
-                await updateStatus(userId, { actif: newStatus }); 
-                
-                setSuccess("Statut de l'utilisateur mis à jour avec succès");
+                const isActif = targetUser.actif === true || targetUser.actif === 'true';
+                await updateStatus(userId, { actif: !isActif });
+                setSuccess("Statut mis à jour avec succès");
                 await fetchUsers();
-            } catch (err) {
-                console.error("Erreur lors du changement de statut: ", err);
+            } catch {
                 setError("Erreur lors du changement de statut");
             } finally {
                 setActionInProgress(false);
@@ -122,9 +105,10 @@ function AdminDashboard() {
     };
 
     const handleCloseModal = () => {
-        setIsCreateModalOpen(false);
+        setIsCreateUserModalOpen(false);
         setIsUpdateModalOpen(false);
         setIsViewModalOpen(false);
+        setIsCreateTdModalOpen(false);
         setSelectedUser(null);
         setViewingUser(null);
     };
@@ -135,9 +119,10 @@ function AdminDashboard() {
         setSuccess("Opération effectuée avec succès");
     };
 
-    const handleFilterChange = (newFilters: UserFilters) => {
-        setFilters(newFilters);
-        setCurrentPage(1);
+    const handleTdCreated = () => {
+        handleCloseModal();
+        setTdRefresh(r => r + 1);
+        setSuccess("Type de document créé avec succès");
     };
 
     const filteredUsers = users.filter(u =>
@@ -157,10 +142,11 @@ function AdminDashboard() {
     return (
         <div className="admin-dashboard">
             <div className="admin-body">
-                {}
+
                 <Sidebar title={userInfo?.role || "ADMINISTRATEUR"}>
                     <nav className="sidebar-nav">
                         <div>
+                            {/* Profil */}
                             <div className="main-header">
                                 <button
                                     onClick={() => setCurrentView('profile')}
@@ -170,27 +156,41 @@ function AdminDashboard() {
                                 </button>
                             </div>
 
+                            {/* Section Utilisateurs */}
+                            <div className="sidebar-section-label">Utilisateurs</div>
                             <div className="main-header">
                                 <button
-                                    onClick={() => {
-                                        setCurrentView('list'); // S'assure que la liste se ré-affiche au besoin
-                                        setIsCreateModalOpen(true);
-                                    }}
+                                    onClick={() => { setCurrentView('users'); setIsCreateUserModalOpen(true); }}
                                     className="sidebar-btn"
                                 >
                                     Créer un utilisateur
                                 </button>
                             </div>
-
                             <div className="main-header">
                                 <button
-                                    onClick={() => {
-                                        setCurrentView('list'); // Forcer le retour visuel sur la liste
-                                        setIsOpen(!isOpen);
-                                    }}
-                                    className={`sidebar-btn ${currentView === 'list' && isOpen ? 'active-tab' : ''}`}
+                                    onClick={() => setCurrentView('users')}
+                                    className={`sidebar-btn ${currentView === 'users' ? 'active-tab' : ''}`}
                                 >
-                                    {isOpen && currentView === 'list' ? "Masquer la liste" : "Liste des utilisateurs"}
+                                    Liste des utilisateurs
+                                </button>
+                            </div>
+
+                            {/* Section Types de documents */}
+                            <div className="sidebar-section-label">Documents</div>
+                            <div className="main-header">
+                                <button
+                                    onClick={() => { setCurrentView('type-documents'); setIsCreateTdModalOpen(true); }}
+                                    className="sidebar-btn"
+                                >
+                                    Créer un type
+                                </button>
+                            </div>
+                            <div className="main-header">
+                                <button
+                                    onClick={() => setCurrentView('type-documents')}
+                                    className={`sidebar-btn ${currentView === 'type-documents' ? 'active-tab' : ''}`}
+                                >
+                                    Types de documents
                                 </button>
                             </div>
 
@@ -200,90 +200,78 @@ function AdminDashboard() {
                     </nav>
                 </Sidebar>
 
-                <div className='main-content'>
-                    {/* 💡 Aiguillage dynamique du contenu principal */}
-                    {currentView === 'list' ? (
-                        isOpen && (
-                            <>
-                                <FilterUsers filters={filters} onChange={handleFilterChange} />
+                {/* Main content */}
+                <div className="main-content">
 
-                                <p className="users-count">
-                                    <span>{filteredUsers.length}</span> utilisateur{filteredUsers.length > 1 ? 's' : ''}
-                                    {filteredUsers.length !== users.length && <> sur <span>{users.length}</span></>}
-                                </p>
-
-                                <UserTable
-                                    user={paginatedUsers}
-                                    // 💡 Modification de la signature pour inclure l'action 'view'
-                                    onAction={(id, action) => handleAction(id, action as any)}
-                                    actionInProgress={actionInProgress}
-                                />
-
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onChange={setCurrentPage}
-                                />
-                            </>
-                        )
-                    ) : (
-                        /* 💡 Rendu de ton composant profil autonome, sans aucun style inline */
+                    {currentView === 'profile' && (
                         <Profile userId={userInfo?.id} />
+                    )}
+
+                    {currentView === 'users' && (
+                        <>
+                            <FilterUsers
+                                filters={filters}
+                                onChange={(f) => { setFilters(f); setCurrentPage(1); }}
+                            />
+                            <p className="users-count">
+                                <span>{filteredUsers.length}</span> utilisateur{filteredUsers.length > 1 ? 's' : ''}
+                                {filteredUsers.length !== users.length && <> sur <span>{users.length}</span></>}
+                            </p>
+                            <UserTable
+                                user={paginatedUsers}
+                                onAction={(id, action) => handleAction(id, action as any)}
+                                actionInProgress={actionInProgress}
+                            />
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onChange={setCurrentPage}
+                            />
+                        </>
+                    )}
+
+                    {currentView === 'type-documents' && (
+                        <TypeDocumentList refreshTrigger={tdRefresh} />
                     )}
                 </div>
 
-                {/* 1. MODAL : CRÉATION */}
-                <Modal
-                    isOpen={isCreateModalOpen}
-                    onClose={handleCloseModal}
-                    title="Créer un utilisateur"
-                >
-                    {/* 💡 Correction 3 : 'onSuccess' harmonisé en 'onsuccess' */}
+                {/* Modal : créer utilisateur */}
+                <Modal isOpen={isCreateUserModalOpen} onClose={handleCloseModal} title="Créer un utilisateur">
                     <CreateUser onsuccess={handleUserUpdated} />
                 </Modal>
 
-                {/* 2. MODAL : MODIFICATION */}
-                <Modal
-                    isOpen={isUpdateModalOpen}
-                    onClose={handleCloseModal}
-                    title="Mettre à jour un utilisateur"
-                >
-                    {selectedUser && (
-                        /* 💡 Correction 4 : Transfert via 'initialData' et 'onsuccess' */
-                        <UpdateUser
-                            initialData={selectedUser}
-                            onsuccess={handleUserUpdated}
-                        />
-                    )}
+                {/* Modal : modifier utilisateur */}
+                <Modal isOpen={isUpdateModalOpen} onClose={handleCloseModal} title="Mettre à jour un utilisateur">
+                    {selectedUser && <UpdateUser initialData={selectedUser} onsuccess={handleUserUpdated} />}
                 </Modal>
 
-                {/* 3. 💡 NOUVEAU MODAL : AFFICHAGE DÉTAILLÉ */}
-                <Modal
-                    isOpen={isViewModalOpen}
-                    onClose={handleCloseModal}
-                    title="Détails de l'utilisateur"
-                >
+                {/* Modal : voir utilisateur */}
+                <Modal isOpen={isViewModalOpen} onClose={handleCloseModal} title="Détails de l'utilisateur">
                     {viewingUser && (
                         <div className="user-details-card">
-                            <div className="details-row"><strong>Identifiant unique :</strong> {viewingUser.id}</div>
+                            <div className="details-row"><strong>Identifiant :</strong> {viewingUser.id}</div>
                             <div className="details-row"><strong>Nom complet :</strong> {viewingUser.nom} {viewingUser.prenom}</div>
-                            <div className="details-row"><strong>Adresse Email :</strong> {viewingUser.email}</div>
-                            <div className="details-row"><strong>Numéro de Téléphone :</strong> {viewingUser.telephone}</div>
+                            <div className="details-row"><strong>Email :</strong> {viewingUser.email}</div>
+                            <div className="details-row"><strong>Téléphone :</strong> {viewingUser.telephone}</div>
                             <div className="details-row">
-                                <strong>Statut du Compte :</strong> 
+                                <strong>Statut :</strong>
                                 <span className={`status-tag ${viewingUser.actif === true || viewingUser.actif === 'true' ? 'active' : 'inactive'}`}>
-                                    {viewingUser.actif === true || viewingUser.actif === 'true' ? ' Actif' : ' Bloqué / Inactif'}
+                                    {viewingUser.actif === true || viewingUser.actif === 'true' ? 'Actif' : 'Bloqué'}
                                 </span>
                             </div>
                             <div className="details-row">
-                                <strong>Rôles attribués :</strong> {viewingUser.roles?.map(r => r.name).join(', ') || 'Aucun'}
+                                <strong>Rôles :</strong> {viewingUser.roles?.map(r => r.name).join(', ') || 'Aucun'}
                             </div>
-                            <button onClick={handleCloseModal} className="details-close-btn">
-                                Fermer
-                            </button>
+                            <button onClick={handleCloseModal} className="details-close-btn">Fermer</button>
                         </div>
                     )}
                 </Modal>
+
+                {/* Modal : créer type de document */}
+                <Modal isOpen={isCreateTdModalOpen} onClose={handleCloseModal} title="Créer un type de document">
+                    <CreateTypeDocument onsuccess={handleTdCreated} />
+                </Modal>
+
             </div>
         </div>
     );

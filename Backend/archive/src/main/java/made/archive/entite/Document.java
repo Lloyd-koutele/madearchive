@@ -14,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -44,24 +46,24 @@ public  class Document
     private TypeAccess access;
 
     @NotBlank(message = "La signature hash est obligatoire")
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String sha256Hash;
 
     @Column(length = 100)
-    private String blockChainTxld;
+    private String blockChainTxId;
 
     @NotNull
     private LocalDate retentionUntil;
 
     @NotNull
-    private LocalDateTime createAt;
+    private LocalDateTime createAt = LocalDateTime.now(); 
 
     @NotNull
     private Long version;
 
-    @NotBlank(message = "La signature hash est obligatoire")
-    @Column(nullable = false, length = 100)
-    private String minIOkey;
+    @NotBlank(message = "La cle de stockage PDF/A-3b est obligatoire")
+    @Column(nullable = false, length = 200)
+    private String storageKey;
 
     @OneToMany(mappedBy = "document", fetch = FetchType.LAZY)
     private List<DataType> data;
@@ -72,7 +74,7 @@ public  class Document
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private IntegretyLevel integretyLevel;
+    private IntegrityLevel integrityLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "groupe_id")
@@ -85,4 +87,11 @@ public  class Document
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_document_id", nullable = false)
     private TypeDocument typeDocument;
+
+    @OneToOne(mappedBy = "document", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private FixityCheckResult fixityCheckResult;
+
+    @NotBlank(message = "La cle de stockage originale est obligatoire")
+    @Column(nullable = false, length = 200)
+    private String originalStorageKey;
 }

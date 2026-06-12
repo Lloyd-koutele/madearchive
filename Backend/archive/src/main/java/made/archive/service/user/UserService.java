@@ -69,7 +69,9 @@ public class UserService
     @Transactional
     public List<UserResponseDto> getUsersyRole (Role roles)
     {
-        if (roles == null) 
+        try
+        {
+            if (roles == null) 
         {
             throw new BusinessException("Le rôle est obligatoire");
         }
@@ -78,6 +80,11 @@ public class UserService
         return users.stream()
             .map(this::convertUserToDto)
             .toList();
+        }
+        catch(Exception e)
+        {
+            throw new BusinessException("Erreur lors de la récupération des utilisateurs par rôle: " + e.getMessage());
+        }
     }
 
     @Transactional(readOnly = true)

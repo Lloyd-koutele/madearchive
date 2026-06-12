@@ -1,6 +1,6 @@
 package made.archive.entite;
 
-public enum IntegretyLevel
+public enum IntegrityLevel
 {
     STANDARD,
     BLOCKCHAIN

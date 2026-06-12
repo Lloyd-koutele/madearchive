@@ -39,10 +39,10 @@ public class TypeDocument
 
     @NotNull
     @JoinColumn(name = "retention_id", nullable = false)
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Retention retention;
 
-    @OneToMany(mappedBy = "typeDocument", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "typeDocument", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @ToString.Exclude
     private List<MetaData> metaData;
 

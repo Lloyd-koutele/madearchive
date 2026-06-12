@@ -1,6 +1,5 @@
 package made.archive.service.document;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -23,18 +22,23 @@ import java.util.Optional;
 @Service
 public class TypeDocumentService 
 {
-    @Autowired
     private TypeDocumentRepository typeDocumentRepository;
 
-    @Autowired
     private UserRepository userRepository;
+
+    // ✅ CONSTRUCTEUR D'INJECTION DE DÉPENDANCES
+    public TypeDocumentService(TypeDocumentRepository typeDocumentRepository, UserRepository userRepository) 
+    {
+        this.typeDocumentRepository = typeDocumentRepository;
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     public List<TypeDocument> getAllTypeDocuments()
     {
         try
         {
-            return typeDocumentRepository.findAll();
+            return typeDocumentRepository.findAllWithRetentionAndMetaData();
         }
         catch(Exception e)
         {
@@ -68,6 +72,19 @@ public class TypeDocumentService
         }
     }
 
+    
+    public boolean hasLinkedDocuments(Long id) 
+    {
+        try
+        {
+            return typeDocumentRepository.existsByDocumentsNotEmptyAndId(id);
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException("Erreur lors de la récupération du type le type de documents");
+        }
+    }
+
     @Transactional
     public void deleteTypeDocumentById(Long id) 
     {
@@ -76,9 +93,8 @@ public class TypeDocumentService
             {
                 throw new BusinessException("Impossible de supprimer : le type de document avec l'ID " + id + " n'existe pas.");
             }
-            boolean hasLinkedDocuments = typeDocumentRepository.existsByDocumentsNotEmptyAndId(id);
             
-            if (hasLinkedDocuments) 
+            if (hasLinkedDocuments(id)) 
             {
                 throw new BusinessException("Impossible de supprimer ce type de document car des documents y sont actuellement rattachés.");
             }
@@ -207,10 +223,15 @@ public class TypeDocumentService
             {
                 throw new BusinessException("Données invalides");
             }
-
+    
             TypeDocument typeDocument = typeDocumentRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Type de document non trouvé avec l'ID: " + id));
-
+            
+            if (hasLinkedDocuments(id)) 
+            {
+                throw new BusinessException("Impossible de modifier ce type de document car des documents y sont actuellement rattachés.");
+            }
+    
             if (!typeDocument.getNom().equalsIgnoreCase(dto.getNom())) 
             {
                 typeDocumentRepository.findByNom(dto.getNom()).ifPresent(t -> 
@@ -219,8 +240,15 @@ public class TypeDocumentService
                 });
                 typeDocument.setNom(dto.getNom());
             }
-
+    
+            // Gestion sécurisée de la rétention
             Retention currentRetention = typeDocument.getRetention();
+            if (currentRetention == null) {
+                currentRetention = new Retention();
+                currentRetention.setCreateAt(LocalDateTime.now());
+                typeDocument.setRetention(currentRetention);
+            }
+    
             if (dto.getRetentionYears() != null && dto.getRetentionYears() > 0) 
             {
                 currentRetention.setRetentionYears(dto.getRetentionYears());
@@ -229,24 +257,49 @@ public class TypeDocumentService
             {
                 currentRetention.setPeriodGrace(dto.getPeriodGrace());
             }
-
-            if (dto.getMetaData() != null && !dto.getMetaData().isEmpty()) 
+    
+            // 💡 OPTIMISATION : Mise à jour intelligente des métadonnées (évite le massacre des IDs)
+            if (dto.getMetaData() != null) 
             {
-                typeDocument.getMetaData().clear(); 
-                for (MetaDataDto metaDto : dto.getMetaData()) {
-                    MetaData metaData = new MetaData();
-                    metaData.setNom(metaDto.getNom());
-                    metaData.setObligatoire(metaDto.getObligatoire());
-                    metaData.setMetaDataType(metaDto.getMetaDataType());
-                    metaData.setTypeDocument(typeDocument);
-                    typeDocument.getMetaData().add(metaData);
+                List<MetaData> currentMetaDatas = typeDocument.getMetaData();
+                List<MetaData> updatedMetaDatas = new ArrayList<>();
+    
+                for (MetaDataDto metaDto : dto.getMetaData()) 
+                {
+                    if (metaDto.getId() != null) 
+                    {
+                        // Cas 1 : La métadonnée existe déjà, on la met à jour sans changer son ID
+                        currentMetaDatas.stream()
+                            .filter(m -> m.getId().equals(metaDto.getId()))
+                            .findFirst()
+                            .ifPresent(existingMeta -> {
+                                existingMeta.setNom(metaDto.getNom());
+                                existingMeta.setObligatoire(metaDto.getObligatoire());
+                                existingMeta.setMetaDataType(metaDto.getMetaDataType());
+                                updatedMetaDatas.add(existingMeta);
+                            });
+                    } 
+                    else 
+                    {
+                        // Cas 2 : C'est une nouvelle métadonnée, on l'instancie
+                        MetaData newMeta = new MetaData();
+                        newMeta.setNom(metaDto.getNom());
+                        newMeta.setObligatoire(metaDto.getObligatoire());
+                        newMeta.setMetaDataType(metaDto.getMetaDataType());
+                        newMeta.setTypeDocument(typeDocument);
+                        updatedMetaDatas.add(newMeta);
+                    }
                 }
+    
+                // On vide proprement la collection persistante et on y injecte la nouvelle liste mélangée
+                currentMetaDatas.clear();
+                currentMetaDatas.addAll(updatedMetaDatas);
             }
-
+    
             typeDocumentRepository.save(typeDocument);
             dto.setId(typeDocument.getId());
             return Optional.of(dto);
-
+    
         } 
         catch (BusinessException e) 
         {
@@ -254,7 +307,7 @@ public class TypeDocumentService
         } 
         catch (Exception e) 
         {
-            throw new BusinessException("Erreur lors de la modification: " + e.getMessage());
+            throw new BusinessException("Erreur lors de la modification: " + e.getMessage(), e);
         }
     }
 }

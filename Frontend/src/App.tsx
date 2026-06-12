@@ -2,6 +2,8 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import Login from './auth/Login.tsx';
 import Home from './Page/Home.tsx';
 import AdminDashboard from './Admin/AdminDahboard.tsx';
+import EditorDashboard from './Editor/EditorDasboard.tsx';
+import UserDashboard from './User/UserDashboard.tsx';
 import './style/global.css'
 
 import { getUserRole, hasRole } from './auth/authService';
@@ -37,8 +39,14 @@ const router = createBrowserRouter([
         <AdminDashboard />
       </PrivateRoute>
   },
-  { path: '/editeur', element: <PrivateRoute requiredRole="EDITOR"><div>Page editeur</div></PrivateRoute> },
-  { path: '/user', element: <PrivateRoute requiredRole="USER"><div>Page utilisateur</div></PrivateRoute> }
+  { path: '/editeur', element: 
+  <PrivateRoute requiredRole="EDITOR">
+    <EditorDashboard/>
+  </PrivateRoute> },
+  { path: '/user', element: 
+  <PrivateRoute requiredRole="USER">
+    <UserDashboard/>
+  </PrivateRoute> }
 ]);
 
 // App principal

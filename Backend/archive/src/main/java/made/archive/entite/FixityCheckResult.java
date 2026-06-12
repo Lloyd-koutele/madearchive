@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,8 +27,8 @@ public class FixityCheckResult
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name="document_id", nullable=false)
+    @OneToOne
+    @JoinColumn(name="document_id", nullable=false, unique=true)
     private Document document;
 
     @Column(nullable = false)
