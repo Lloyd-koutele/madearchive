@@ -1,6 +1,5 @@
 package made.archive.service.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -23,13 +22,10 @@ import made.archive.dto.UserResponseDto;
 @Service
 public class UserService
 {
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
     private RoleRepository roleRepository;
 
     private UserResponseDto convertUserToDto(User user) 

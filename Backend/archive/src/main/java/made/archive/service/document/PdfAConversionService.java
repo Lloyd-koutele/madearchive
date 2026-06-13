@@ -3,7 +3,6 @@ package made.archive.service.document;
 import lombok.extern.slf4j.Slf4j;
 import made.archive.exception.PdfAConversionException;
 
-import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
@@ -31,7 +30,7 @@ public class PdfAConversionService
      */
     public byte[] convertToPdfA3(byte[] pdfBytes) throws PdfAConversionException
     {
-        try (PDDocument document = Loader.loadPDF(new ByteArrayInputStream(pdfBytes).readAllBytes()))
+        try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes).readAllBytes()))
         {
             // 1. Métadonnées de base
             PDDocumentInformation info = document.getDocumentInformation();

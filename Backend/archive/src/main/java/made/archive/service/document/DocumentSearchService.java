@@ -13,6 +13,7 @@ import made.archive.entite.User;
 import made.archive.exception.BusinessException;
 import made.archive.repository.DocumentRepository;
 import made.archive.repository.UserRepository;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -41,9 +42,9 @@ public class DocumentSearchService
 
         try
         {
-            // Construire le body de la requête manuellement
+            // ── 1. Corps de la requête Meilisearch ──────────────────────────
             Map<String, Object> body = new LinkedHashMap<>();
-            body.put("q", request.getQuery());
+            body.put("q", request.getQuery() != null ? request.getQuery() : "");
             body.put("page", request.getPage());
             body.put("hitsPerPage", request.getHitsPerPage());
             body.put("attributesToRetrieve", List.of(
@@ -52,16 +53,16 @@ public class DocumentSearchService
                 "uploadedBy", "groupeId"
             ));
 
-            // Filtres
-            List<String> filters = new ArrayList<>();
+            // ── 2. Filtres — string unique avec AND ──────────────────────────
+            List<String> filterParts = new ArrayList<>();
             if (request.getTypeDocumentId() != null)
             {
-                filters.add("typeDocumentId = " + request.getTypeDocumentId());
+                filterParts.add("typeDocumentId = " + request.getTypeDocumentId());
             }
-            filters.add("status != DELETED");
-            body.put("filter", filters);
+            filterParts.add("status != DELETED");
+            body.put("filter", String.join(" AND ", filterParts));
 
-            // Appel direct à l'API Meilisearch via WebClient
+            // ── 3. Appel WebClient vers Meilisearch ──────────────────────────
             WebClient client = webClientBuilder
                 .baseUrl(meilisearchProperties.getHost())
                 .defaultHeader("Authorization",
@@ -70,37 +71,36 @@ public class DocumentSearchService
 
             String responseJson = client.post()
                 .uri("/indexes/" + INDEX_NAME + "/search")
-                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
 
-            // Parser la réponse avec Jackson
+            // ── 4. Parse de la réponse ───────────────────────────────────────
             Map<String, Object> response = objectMapper.readValue(
                 responseJson,
-                new TypeReference<Map<String, Object>>(){});
+                new TypeReference<Map<String, Object>>() {});
 
-            List<Map<String, Object>> hits = objectMapper.convertValue(
-                response.get("hits"),
-                new TypeReference<List<Map<String, Object>>>(){});
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> hits = response.get("hits") instanceof List<?>
+                ? (List<Map<String, Object>>) response.get("hits")
+                : Collections.emptyList();
 
-            int totalHits = (int) response.getOrDefault("totalHits", 0);
-            int totalPages = (int) response.getOrDefault("totalPages", 1);
+            int totalHits  = toInt(response.get("totalHits"), 0);
+            int totalPages = toInt(response.get("totalPages"), 1);
 
-            if (hits == null) hits = Collections.emptyList();
-
-            // Filtrer selon les droits d'accès
-            List<Map<String, Object>> filtered = hits.stream()
+            // ── 5. Filtre par droits d'accès ─────────────────────────────────
+            List<Map<String, Object>> accessible = hits.stream()
                 .filter(hit -> isAccessible(hit, user))
                 .collect(Collectors.toList());
 
-            List<SearchResultItemDto> items = filtered.stream()
+            List<SearchResultItemDto> items = accessible.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
 
             log.info("[Search] '{}' → {} résultats pour {}",
-                     request.getQuery(), items.size(), user.getEmail());
+                request.getQuery(), items.size(), user.getEmail());
 
             return SearchResultDto.builder()
                 .totalHits(totalHits)
@@ -129,9 +129,11 @@ public class DocumentSearchService
         }
     }
 
+    // ── Accessibilité ────────────────────────────────────────────────────────
+
     private boolean isAccessible(Map<String, Object> hit, User user)
     {
-        String access = (String) hit.get("access");
+        String access = asString(hit.get("access"));
 
         if (TypeAccess.PUBLIC.name().equals(access))
         {
@@ -140,10 +142,11 @@ public class DocumentSearchService
 
         if (TypeAccess.PRIVE.name().equals(access))
         {
-            String documentIdStr = (String) hit.get("id");
+            String idStr = asString(hit.get("id"));
+            if (idStr == null) return false;
             try
             {
-                UUID documentId = UUID.fromString(documentIdStr);
+                UUID documentId = UUID.fromString(idStr);
                 return documentRepository.findById(documentId)
                     .map(doc -> doc.getGroupe() != null &&
                         doc.getGroupe().getMembres().stream()
@@ -152,6 +155,7 @@ public class DocumentSearchService
             }
             catch (Exception e)
             {
+                log.warn("[Search] UUID invalide dans le hit : {}", idStr);
                 return false;
             }
         }
@@ -159,19 +163,77 @@ public class DocumentSearchService
         return false;
     }
 
+    // ── Conversion hit → DTO ─────────────────────────────────────────────────
+
     private SearchResultItemDto toDto(Map<String, Object> hit)
     {
-        String retentionStr = (String) hit.get("retentionUntil");
-        LocalDate retentionUntil = retentionStr != null
-            ? LocalDate.parse(retentionStr) : null;
+        String idStr        = asString(hit.get("id"));
+        String retentionStr = asString(hit.get("retentionUntil"));
+
+        UUID documentId = null;
+        if (idStr != null)
+        {
+            try 
+            {
+                documentId = UUID.fromString(idStr); 
+            }
+            catch (IllegalArgumentException e) 
+            {
+                log.warn("[Search] UUID invalide : {}", idStr);
+            }
+        }
+
+        LocalDate retentionUntil = null;
+        if (retentionStr != null)
+        {
+            try 
+            { 
+                retentionUntil = LocalDate.parse(retentionStr); 
+            }
+            catch (Exception e) 
+            {
+                log.warn("[Search] Date invalide : {}", retentionStr);
+            }
+        }
 
         return SearchResultItemDto.builder()
-            .documentId(UUID.fromString((String) hit.get("id")))
-            .titre((String) hit.get("titre"))
-            .typeDocument((String) hit.get("typeDocument"))
-            .access((String) hit.get("access"))
-            .status((String) hit.get("status"))
+            .documentId(documentId)
+            .titre(asString(hit.get("titre")))
+            .typeDocument(asString(hit.get("typeDocument")))
+            .access(asString(hit.get("access")))
+            .status(asString(hit.get("status")))
             .retentionUntil(retentionUntil)
             .build();
+    }
+
+    // ── Utilitaires de cast sûrs ─────────────────────────────────────────────
+
+    /**
+     * Convertit un Object en String de manière sûre.
+     * Retourne null si la valeur est null ou n'est pas une String.
+     */
+    private String asString(Object value)
+    {
+        if (value instanceof String s) return s;
+        if (value != null) return value.toString();
+        return null;
+    }
+
+    /**
+     * Convertit un Object en int avec une valeur par défaut.
+     */
+    private int toInt(Object value, int defaultValue)
+    {
+        if (value instanceof Integer i) return i;
+        if (value instanceof Number n) return n.intValue();
+        if (value instanceof String s)
+        {
+            try 
+            {
+                return Integer.parseInt(s); 
+            }
+            catch (NumberFormatException ignored) {}
+        }
+        return defaultValue;
     }
 }

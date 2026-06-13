@@ -1,7 +1,7 @@
 import api from "../api";
 
 export type TypeAccess = 'PUBLIC' | 'PRIVE';
-export type IntegrityLevel = 'STANDARD' | 'ADVANCED';
+export type IntegrityLevel = 'STANDARD' | 'BLOCKCHAIN';
 export type DocumentStatus = 'PENDING' | 'ACTIVE' | 'ACTIVE_WARNING' | 'CORRUPTED' | 'DELETED';
 
 export interface DocumentUploadDto {
@@ -56,6 +56,46 @@ export const uploadDocument = async (
     }
 };
 
+export type MetaDataType = 'CHAR' | 'STRING' | 'INTEGER' | 'FLOAT' | 'DOUBLE' | 'BOOLEAN' | 'DATE' | 'TEXT';
+
+export interface MetaDataDto {
+    id?: number;
+    nom: string;
+    obligatoire: boolean;
+    metaDataType: MetaDataType;
+}
+
+export interface TypeDocumentDto {
+    id?: number;
+    nom: string;
+    metaData: MetaDataDto[];
+    userId: string;
+    retentionYears: number;
+    periodGrace: number;
+}
+
+export const getAllTypeDocuments = async (): Promise<TypeDocumentDto[]> => {
+    try {
+        const response = await api.get('/editor/types-documents');
+        return response.data;
+    } catch (error: any) {
+        throw error.response?.data?.message
+            ? new Error(error.response.data.message)
+            : error;
+    }
+};
+
+export const getTypeDocumentById = async (id: number): Promise<TypeDocumentDto> => {
+    try {
+        const response = await api.get(`/editor/types-documents/${id}`);
+        return response.data;
+    } catch (error: any) {
+        throw error.response?.data?.message
+            ? new Error(error.response.data.message)
+            : error;
+    }
+};
+
 // Bulk même type — plusieurs fichiers, même typeDocumentId
 export const uploadBulkSameType = async (
     files: File[],
@@ -103,5 +143,38 @@ export const getMyDocuments = async (): Promise<any[]> => {
         return response.data;
     } catch (error: any) {
         throw new Error(error.response?.data || error.message || "Erreur chargement documents");
+    }
+};
+
+// Sauvegarder les métadonnées validées
+export const saveMetaData = async (
+    documentId: string,
+    dto: { metaData: { nom: string; valeur: string; typeValeur: string }[] }
+): Promise<void> => {
+    try {
+        await api.post(`/editor/docs/${documentId}/metadata`, dto);
+    } catch (error: any) {
+        throw new Error(
+            error.response?.data || error.message || "Erreur sauvegarde métadonnées"
+        );
+    }
+};
+
+// Récupérer tous les utilisateurs pour le choix des membres
+export interface UserDto {
+    id: string;
+    nom: string;
+    prenom: string;
+    email: string;
+}
+
+export const getAllUsers = async (): Promise<UserDto[]> => {
+    try {
+        const response = await api.get('/editor/users');
+        return response.data;
+    } catch (error: any) {
+        throw new Error(
+            error.response?.data || error.message || "Erreur récupération utilisateurs"
+        );
     }
 };

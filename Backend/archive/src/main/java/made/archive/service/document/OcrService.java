@@ -12,7 +12,6 @@ import made.archive.repository.OcrResultRepository;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 
-import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.tika.Tika;
@@ -163,7 +162,7 @@ public class OcrService
         Tesseract tesseract = buildTesseract();
         StringBuilder fullText = new StringBuilder();
 
-        try (PDDocument pdDocument = Loader.loadPDF(new ByteArrayInputStream(fileBytes).readAllBytes()))
+        try (PDDocument pdDocument = PDDocument.load(new ByteArrayInputStream(fileBytes).readAllBytes()))
         {
             PDFRenderer renderer = new PDFRenderer(pdDocument);
             int pageCount = pdDocument.getNumberOfPages();

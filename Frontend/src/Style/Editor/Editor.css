@@ -649,6 +649,258 @@
 /* ── Détail document ── */
 .doc-detail { display: flex; flex-direction: column; gap: 0; }
 
+/* ── Upload steps indicator ── */
+.upload-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 1.25rem;
+}
+
+.upload-step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+    color: var(--text-light);
+    position: relative;
+}
+
+.upload-step:not(:last-child)::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1.5px;
+    background: var(--border);
+    margin-left: 0.5rem;
+}
+
+.upload-step.active {
+    color: var(--dark-choc);
+    font-weight: 600;
+}
+
+.upload-step.done {
+    color: var(--success);
+}
+
+.step-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--white-choc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-light);
+    flex-shrink: 0;
+    transition: background var(--transition), border-color var(--transition);
+}
+
+.upload-step.active .step-number {
+    background: var(--dark-choc);
+    border-color: var(--dark-choc);
+    color: var(--white-choc);
+}
+
+.upload-step.done .step-number {
+    background: var(--success);
+    border-color: var(--success);
+    color: var(--white-choc);
+}
+
+.step-label {
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+/* ── Upload progress (étape 2) ── */
+.upload-progress {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    min-height: 180px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.progress-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    background: var(--white-choc);
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--dark-choc);
+    animation: fadeInStep 0.3s ease;
+}
+
+.progress-step.loading {
+    color: var(--text-light);
+    font-style: italic;
+    background: transparent;
+    border-color: transparent;
+}
+
+@keyframes fadeInStep {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Métadonnées (étape 3) ── */
+.up-result-header {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.meta-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.meta-fields-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.required-star {
+    color: var(--error);
+    margin-left: 2px;
+}
+
+.meta-prefilled {
+    font-size: 0.72rem;
+    color: var(--success);
+    font-weight: 400;
+    font-style: italic;
+    margin-left: 4px;
+}
+
+/* ── Groupe section (upload privé) ── */
+.groupe-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.membres-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.membres-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.membres-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white-choc);
+    padding: 0.5rem;
+}
+
+.membre-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background var(--transition);
+    border: 1px solid transparent;
+}
+
+.membre-item:hover {
+    background: var(--cream);
+    border-color: var(--border);
+}
+
+.membre-item input[type="checkbox"] {
+    accent-color: var(--dark-choc);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.membre-item span:nth-child(2) {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--dark-choc);
+    flex: 1;
+}
+
+.membre-email {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    white-space: nowrap;
+}
+
+/* Responsive nouveaux éléments */
+@media (max-width: 768px) {
+    .upload-steps {
+        gap: 0;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 0.25rem;
+    }
+
+    .upload-step:not(:last-child)::after {
+        width: 20px;
+    }
+
+    .step-label {
+        display: none;
+    }
+
+    .multitype-files {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .up-row { grid-template-columns: 1fr; }

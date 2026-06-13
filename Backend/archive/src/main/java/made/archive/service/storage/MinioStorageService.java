@@ -127,6 +127,7 @@ public class MinioStorageService implements StorageService
         }
         catch (Exception e)
         {
+            log.error("[MinIO] Erreur détaillée upload original MinIO : ", e);
             throw new RuntimeException("Erreur upload original MinIO : " + key, e);
         }
     }

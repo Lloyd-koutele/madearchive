@@ -67,10 +67,20 @@ dependencies {
 	implementation 'org.apache.tika:tika-core:2.9.1'
 	implementation 'org.apache.tika:tika-parsers-standard-package:2.9.1'
 	implementation 'net.sourceforge.tess4j:tess4j:5.11.0'
-	
-	// PDF
-	implementation 'org.apache.pdfbox:pdfbox:3.0.2'
-	implementation 'org.apache.pdfbox:pdfbox-tools:3.0.2'
+
+	// Tika
+    implementation 'org.apache.tika:tika-core:2.9.1'
+    implementation 'org.apache.tika:tika-parsers-standard-package:2.9.1'
+    
+    // PDFBox — version 2.x obligatoire pour compatibilité avec Tika 2.9.1
+    implementation 'org.apache.pdfbox:pdfbox:2.0.31'
+    
+    // Exclure PDFBox 3.x si importé transitivement
+    configurations.all {
+        resolutionStrategy {
+            force 'org.apache.pdfbox:pdfbox:2.0.31'
+        }
+    }
 	
 	// Recherche
 	implementation 'com.meilisearch.sdk:meilisearch-java:0.11.0'
@@ -89,7 +99,7 @@ dependencies {
 	//Ollama
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	//
+	//JSON
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 

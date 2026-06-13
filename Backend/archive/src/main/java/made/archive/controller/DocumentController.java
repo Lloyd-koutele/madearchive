@@ -5,15 +5,23 @@ import made.archive.dto.BulkUploadReportDto;
 import made.archive.dto.CsvTemplateRequestDto;
 import made.archive.dto.DocumentUploadDto;
 import made.archive.dto.DocumentUploadResultDto;
+import made.archive.dto.SaveMetaDataDto;
+import made.archive.entite.TypeDocument;
 import made.archive.service.document.BulkUploadMultiTypeService;
 import made.archive.service.document.BulkUploadSameTypeService;
 import made.archive.service.document.CsvTemplateService;
+import made.archive.service.document.DocumentMetaDataService;
 import made.archive.service.document.DocumentUploadeService;
+import made.archive.service.document.TypeDocumentService;
+import made.archive.service.user.UserService;
+import made.archive.util.TypeDocumentMapper;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +37,45 @@ public class DocumentController
     private final BulkUploadMultiTypeService bulkUploadMultiTypeService;
     private final BulkUploadSameTypeService bulkUploadSameTypeService;
     private final CsvTemplateService csvTemplateService;
+    private final TypeDocumentService typeDocumentService;
+    private final TypeDocumentMapper typeDocumentMapper;
+    private final DocumentMetaDataService documentMetaDataService;
+    private final UserService userService;
+
+
+    @Secured("ROLE_EDITOR")
+    @GetMapping("/types-documents")
+    public ResponseEntity<?> getAllTypeDocuments()
+    {
+        try
+        {
+            List<TypeDocument> typeDocuments = typeDocumentService.getAllTypeDocuments();
+            return ResponseEntity.ok(typeDocumentMapper.toDtoList(typeDocuments));
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.badRequest().body("Erreur lors de la récupération de tous les types de documents: " + e.getMessage());
+        }
+    }
+
+    @Secured("ROLE_EDITOR")
+    @GetMapping("/types-documents/{id}")
+    public ResponseEntity<?> getTypeDocumentById(@PathVariable Long id)
+    {
+        try
+        {
+            TypeDocument typeDocument = typeDocumentService.getTypeDocumentById(id);
+            if (typeDocument == null) 
+            {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(typeDocumentMapper.toDto(typeDocument)); 
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.badRequest().body("Erreur lors de la récupération du type de document: " + e.getMessage());
+        }
+    }
 
     /**
      * Upload d'un seul document.
@@ -162,6 +209,48 @@ public class DocumentController
         catch (Exception e)
         {
             return ResponseEntity.badRequest().build();
+        }
+    }
+/**
+ * POST /api/editor/docs/{documentId}/metadata
+ * Sauvegarde les métadonnées validées par l'utilisateur après OCR.
+ */
+@Secured("ROLE_EDITOR")
+@PostMapping("/docs/{documentId}/metadata")
+public ResponseEntity<?> saveMetaData(
+    @PathVariable UUID documentId,
+    @RequestBody SaveMetaDataDto dto,
+    @AuthenticationPrincipal UserDetails userDetails)
+{
+    try
+    {
+        documentMetaDataService.saveMetaData(documentId, dto, userDetails);
+        return ResponseEntity.ok("Métadonnées sauvegardées avec succès");
+    }
+    catch (Exception e)
+    {
+        return ResponseEntity.badRequest()
+            .body("Erreur sauvegarde métadonnées : " + e.getMessage());
+    }
+}
+
+/**
+ * GET /api/editor/users
+     * Liste tous les utilisateurs de la plateforme.
+     * Utilisé pour le choix des membres du groupe lors de l'upload privé.
+     */
+    @Secured("ROLE_EDITOR")
+    @GetMapping("/users")
+    public ResponseEntity<?> getAllUsers()
+    {
+        try
+        {
+            return ResponseEntity.ok(userService.getAllUsers());
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.badRequest()
+                .body("Erreur récupération utilisateurs : " + e.getMessage());
         }
     }
 }

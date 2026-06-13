@@ -29,8 +29,38 @@ public class MinioClientFactory
         if (client == null)
         {
             client = buildClient();
+            ensureBucketExists();
         }
         return client;
+    }
+    
+    private void ensureBucketExists()
+    {
+        try
+        {
+            boolean exists = client.bucketExists(
+                io.minio.BucketExistsArgs.builder()
+                    .bucket(props.getBucket())
+                    .build()
+            );
+            if (!exists)
+            {
+                client.makeBucket(
+                    io.minio.MakeBucketArgs.builder()
+                        .bucket(props.getBucket())
+                        .build()
+                );
+                log.info("[MinIO] Bucket '{}' créé", props.getBucket());
+            }
+            else
+            {
+                log.info("[MinIO] Bucket '{}' existant", props.getBucket());
+            }
+        }
+        catch (Exception e)
+        {
+            log.error("[MinIO] Erreur vérification bucket : {}", e.getMessage());
+        }
     }
 
     /**

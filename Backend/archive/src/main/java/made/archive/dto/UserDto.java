@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 import java.util.Set;
+import java.util.UUID;
 
 import made.archive.entite.Role;
 
@@ -15,6 +16,8 @@ import made.archive.entite.Role;
 @NoArgsConstructor
 public class UserDto 
 {
+    private UUID id;
+    
     @Size(min = 2, max = 100, message = "Le nom doit contenir entre 2 et 100 caractères")
     private String nom;
     

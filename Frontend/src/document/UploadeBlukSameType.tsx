@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { uploadBulkSameType } from '../services/document/DocumentService';
-import  { getAllTypeDocuments } from '../services/document/TypedocumentService';
+import  { getAllTypeDocuments } from '../services/document/DocumentService';
 import type { BulkUploadReportDto } from '../services/document/DocumentService';
-import type { TypeDocumentDto } from '../services/document/TypedocumentService';
+import type { TypeDocumentDto } from '../services/document/DocumentService';
 import { getCurrentUserInfo } from '../auth/authService';
 import '../Style/Editor/Editor.css';
 
